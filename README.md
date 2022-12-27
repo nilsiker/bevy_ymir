@@ -7,7 +7,7 @@
 
 Ymir is a procedural world generator plugin for Bevy.
 
-Keep in mind Ymir is in very early development. The current API might not be particularly useful and might change very frequently.
+Keep in mind that Ymir is in very early development. The current API might not be particularly useful and might change very frequently.
 
 ## Features
 * Landscape generation
