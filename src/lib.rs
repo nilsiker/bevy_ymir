@@ -35,7 +35,7 @@ struct ChunkDistance(i32);
 struct ObjectDistance(i32);
 
 #[derive(Default)]
-pub struct TerragenPlugin {
+pub struct YmirPlugin {
     pub chunk_distance: i32,
     pub object_distance: i32,
     pub mesh_config: MeshConfig,
@@ -43,7 +43,7 @@ pub struct TerragenPlugin {
     pub inspectors: bool,
 }
 
-impl Plugin for TerragenPlugin {
+impl Plugin for YmirPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system(setup)
             .add_event::<PlayerPositionChangedEvent>()
@@ -55,8 +55,8 @@ impl Plugin for TerragenPlugin {
             .insert_resource(ChunkPool(HashSet::new()))
             .insert_resource(SpawnedChunks(HashSet::new()))
             .add_system(spawn_tasks)
-            .add_system(remove_terrain.label("terragen_cleanup"))
-            .add_system(spawn_chunks.after("terragen_cleanup"))
+            .add_system(remove_terrain.label("ymir_cleanup"))
+            .add_system(spawn_chunks.after("ymir_cleanup"))
             .add_system(register_player_chunk)
             .add_system(update_chunk_pool)
             .add_plugin(ProcSpawnPlugin);
@@ -74,7 +74,7 @@ struct DummyMarker;
 fn setup(mut commands: Commands) {
     commands.spawn((
         SpatialBundle::default(),
-        Name::new("TerraGen"),
+        Name::new("Ymir"),
         Terrain::default(),
     ));
 }

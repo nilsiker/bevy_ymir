@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_inspector_egui::{InspectorPlugin, WorldInspectorParams, WorldInspectorPlugin};
 use bevy_rapier3d::prelude::{NoUserData, RapierPhysicsPlugin};
-use bevy_ymir::{PlayerPositionChangedEvent, TerragenPlugin};
+use bevy_ymir::{PlayerPositionChangedEvent, YmirPlugin};
 use rustpg::{
     core::{camera::CameraPlugin, spectator::SpectatorPlugin},
     nycthemeron::{time_of_day::TimeOfDay, NycthemeronPlugin},
@@ -24,7 +24,7 @@ fn main() {
             inspectors:false,
         })
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
-        .add_plugin(TerragenPlugin {
+        .add_plugin(YmirPlugin {
             chunk_distance: 5,
             object_distance: 1,
             inspectors,
