@@ -34,5 +34,3 @@ Because of the early state of the project, I am not currently accepting code con
 
 ## Licensing
 This project is licensed using a dual MIT/Apache license in accordance with [the COPYRIGHT.md](COPYRIGHT.md).
-
-The project comes bundled with the [Cascadia Code font](https://github.com/microsoft/cascadia-code), which goes under the [SIL Open Font License](https://github.com/microsoft/cascadia-code/blob/main/LICENSE)

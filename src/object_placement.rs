@@ -1,10 +1,8 @@
+
 use bevy::{prelude::*, render::mesh::VertexAttributeValues};
 use rand::Rng;
 
-use super::{mesh::MeshConfig, Chunk, ObjectDistance, PlayerChunk};
-
-#[derive(Component)]
-struct SpawnedObjects;
+use crate::{terrain::MeshConfig, player::PlayerChunk, ObjectDistance, components::Chunk};
 
 #[derive(Default)]
 pub struct ProcSpawnPlugin;
@@ -14,6 +12,9 @@ impl Plugin for ProcSpawnPlugin {
         app.add_system(_dummy_spawn_points); // TODO this needs a severe revamp
     }
 }
+
+#[derive(Component)]
+struct SpawnedObjects;
 
 fn _dummy_spawn_points(
     mut commands: Commands,

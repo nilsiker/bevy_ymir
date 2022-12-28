@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_inspector_egui::{InspectorPlugin, WorldInspectorParams, WorldInspectorPlugin};
 use bevy_rapier3d::prelude::{NoUserData, RapierPhysicsPlugin};
-use bevy_ymir::{PlayerPositionChangedEvent, YmirPlugin};
+use bevy_ymir::{player::YmirPlayer, YmirPlugin};
 use rustpg::{
     core::{camera::CameraPlugin, spectator::SpectatorPlugin},
     nycthemeron::{time_of_day::TimeOfDay, NycthemeronPlugin},
@@ -14,14 +14,15 @@ fn main() {
     };
 
     let mut app = App::new();
-    app.insert_resource(Msaa { samples: 4 })
+    app.add_system(add_ymir_player)
+        .insert_resource(Msaa { samples: 4 })
         .insert_resource(ClearColor(Color::rgb_u8(85, 156, 215)))
         .add_plugins(DefaultPlugins)
         .add_plugin(CameraPlugin)
         .add_plugin(SpectatorPlugin)
         .add_plugin(NycthemeronPlugin {
             time_of_day: TimeOfDay::new(12.0, 0.0, 0.0, 0.0),
-            inspectors:false,
+            inspectors: false,
         })
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugin(YmirPlugin {
@@ -29,8 +30,7 @@ fn main() {
             object_distance: 1,
             inspectors,
             ..default()
-        })
-        .add_system(send_player_pos_events);
+        });
 
     if inspectors {
         app.add_plugin(InspectorPlugin::<AmbientLight>::default())
@@ -45,11 +45,8 @@ fn main() {
     app.run();
 }
 
-fn send_player_pos_events(
-    query: Query<&Transform, With<Camera>>,
-    mut events: EventWriter<PlayerPositionChangedEvent>,
-) {
-    if let Ok(transform) = query.get_single() {
-        events.send(PlayerPositionChangedEvent(transform.translation));
+fn add_ymir_player(mut commands: Commands, query: Query<Entity, Added<Camera>>) {
+    for entity in &query {
+        commands.entity(entity).insert(YmirPlayer);
     }
 }
