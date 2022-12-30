@@ -28,7 +28,7 @@ fn register_player_chunk(
     mut events: EventReader<PlayerPositionChangedEvent>,
 ) {
     if let Err(e) = terrain.get_single() {
-        bevy::log::warn!("No single Terrain entity found.\nError:{}", e);
+        bevy::log::warn!("No single Terrain entity found: {}", e);
         return;
     }
 

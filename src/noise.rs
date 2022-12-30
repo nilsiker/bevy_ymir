@@ -41,7 +41,7 @@ impl NoiseMap {
         size: usize,
         coord: (i32, i32),
         offset: Vec2,
-        use_falloff: bool,  // TODO this causes seam tearing between chunks!
+        use_falloff: bool, // TODO fix bug - this causes seam tearing between chunks!
     ) -> NoiseMap {
         let mut values = vec![0.0; size * size];
 

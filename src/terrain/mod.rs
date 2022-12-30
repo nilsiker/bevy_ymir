@@ -9,7 +9,6 @@ use bevy_inspector_egui::Inspectable;
 use futures_lite::future;
 use noise::{Fbm, Perlin};
 
-use super::components::Chunk;
 use super::noise::NoiseConfig;
 use super::noise::NoiseMap;
 use super::player::PlayerChunk;
@@ -45,6 +44,13 @@ struct SpawnedChunks(HashSet<(i32, i32)>);
 #[derive(Component, Default, Inspectable)]
 pub struct Terrain;
 
+#[derive(Component)]
+pub struct Chunk {
+    pub x: i32,
+    pub y: i32,
+    pub unique_vertices: Vec<[f32; 3]>,
+}
+
 #[derive(Resource, Inspectable, Clone)]
 pub struct MeshConfig {
     #[inspectable(min = 2, max = 1025)]
@@ -59,9 +65,9 @@ pub struct MeshConfig {
 impl Default for MeshConfig {
     fn default() -> Self {
         Self {
-            grid_size: 33,
-            scale: 256.0,
-            height_multiplier: 80.0,
+            grid_size: 17,
+            scale: 128.0,
+            height_multiplier: 10.0,
             texture_mode: default(),
             flat_shading: true,
             color_config: default(),
@@ -105,6 +111,7 @@ fn spawn_chunks(
             (x, y),
             LandscapeData {
                 mesh,
+                unique_vertices,
                 image,
                 collider,
             },
@@ -129,18 +136,16 @@ fn spawn_chunks(
                     ..default()
                 });
 
-                mesh.insert(Name::new(format!("({x},{y})")))
-                    .insert(Chunk { x, y });
+                mesh.insert(Name::new(format!("({x},{y})"))).insert(Chunk {
+                    x,
+                    y,
+                    unique_vertices,
+                });
 
                 match collider {
                     Some(col) => {
                         mesh.with_children(|children| {
-                            let mut transform = Transform::from_scale({
-                                let mut vec = Vec3::ONE;
-                                vec.z = -vec.z;
-                                vec.x = -vec.x;
-                                vec
-                            });
+                            let mut transform = Transform::default();
                             transform.rotation =
                                 Quat::from_euler(EulerRot::XYZ, 0.0, -FRAC_PI_2, 0.0);
 

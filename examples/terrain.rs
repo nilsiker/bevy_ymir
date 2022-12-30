@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy_inspector_egui::{InspectorPlugin, WorldInspectorParams, WorldInspectorPlugin};
-use bevy_rapier3d::prelude::{NoUserData, RapierPhysicsPlugin};
+use bevy_rapier3d::{prelude::{NoUserData, RapierPhysicsPlugin}, render::RapierDebugRenderPlugin};
 use bevy_ymir::{player::YmirPlayer, YmirPlugin};
 use rustpg::{
     core::{camera::CameraPlugin, spectator::SpectatorPlugin},
@@ -24,10 +24,11 @@ fn main() {
             time_of_day: TimeOfDay::new(12.0, 0.0, 0.0, 0.0),
             inspectors: false,
         })
+        // .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
         .add_plugin(YmirPlugin {
             chunk_distance: 5,
-            object_distance: 1,
+            object_distance: 5,
             inspectors,
             ..default()
         });

@@ -1,4 +1,10 @@
-use bevy::{prelude::*, render::{render_resource::{PrimitiveTopology, Extent3d, TextureDimension, TextureFormat}, mesh::Indices}};
+use bevy::{
+    prelude::*,
+    render::{
+        mesh::Indices,
+        render_resource::{Extent3d, PrimitiveTopology, TextureDimension, TextureFormat},
+    },
+};
 
 use bevy_inspector_egui::Inspectable;
 use bevy_rapier3d::prelude::Collider;
@@ -16,6 +22,7 @@ pub struct MeshData {
 
 pub struct LandscapeData {
     pub mesh: Mesh,
+    pub unique_vertices: Vec<[f32; 3]>,
     pub image: Image,
     pub collider: Option<Collider>,
 }
@@ -109,7 +116,7 @@ pub fn get_landscape_data(map: &NoiseMap, mesh_config: &MeshConfig) -> Landscape
 
     let mesh_data = generate_mesh_data(map, mesh_config);
 
-    mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, mesh_data.vertices);
+    mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, mesh_data.vertices.clone());
     mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, mesh_data.uvs);
     mesh.set_indices(Some(Indices::U32(mesh_data.indices)));
 
@@ -143,6 +150,7 @@ pub fn get_landscape_data(map: &NoiseMap, mesh_config: &MeshConfig) -> Landscape
 
     LandscapeData {
         mesh,
+        unique_vertices: mesh_data.vertices,
         image,
         collider: Some(collider),
     }
@@ -178,8 +186,8 @@ fn generate_mesh_data(map: &NoiseMap, mesh_config: &MeshConfig) -> MeshData {
             let xf = x as f32;
             let zf = y as f32;
             let height_value = map.get_value(x, y) * mesh_config.height_multiplier;
-            heights[vertex_index] =
-                map.get_value(x, y) / mesh_config.scale * mesh_config.height_multiplier;
+            heights[y+width*x] =    // NOTE unsure why this is needed...
+                map.get_value(y, x) / mesh_config.scale * mesh_config.height_multiplier;
             vertices[vertex_index] = [
                 (top_left_x + xf) / (width - 1) as f32 * scale,
                 height_value,
@@ -198,6 +206,8 @@ fn generate_mesh_data(map: &NoiseMap, mesh_config: &MeshConfig) -> MeshData {
             vertex_index += 1;
         }
     }
+
+    heights.reverse(); // NOTE unsure why this is needed...
 
     MeshData {
         vertices,

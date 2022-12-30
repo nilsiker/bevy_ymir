@@ -1,4 +1,3 @@
-mod components;
 pub mod noise;
 pub mod player;
 pub mod object_placement;
@@ -9,10 +8,8 @@ use bevy_inspector_egui::InspectorPlugin;
 use player::YmirPlayerPlugin;
 use terrain::YmirTerrainPlugin;
 
-use self::{noise::NoiseConfig, object_placement::ProcSpawnPlugin, terrain::MeshConfig};
+use self::{noise::NoiseConfig, object_placement::YmirSpawnpointPlugin, terrain::MeshConfig};
 
-#[derive(Resource)]
-struct ObjectDistance(i32);
 
 #[derive(Default)]
 pub struct YmirPlugin {
@@ -27,12 +24,11 @@ impl Plugin for YmirPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(self.mesh_config.clone())
             .insert_resource(self.noise_config.clone())
-            .insert_resource(ObjectDistance(self.object_distance))
             .add_plugin(YmirTerrainPlugin {
-                chunk_distance: 3,
+                chunk_distance: self.chunk_distance,
             })
             .add_plugin(YmirPlayerPlugin)
-            .add_plugin(ProcSpawnPlugin);
+            .add_plugin(YmirSpawnpointPlugin {object_distance: self.object_distance});
 
         if self.inspectors {
             app.add_plugin(InspectorPlugin::<MeshConfig>::new_insert_manually());
