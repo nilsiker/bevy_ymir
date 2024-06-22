@@ -1,53 +1,32 @@
 use bevy::prelude::*;
-use bevy_inspector_egui::{InspectorPlugin, WorldInspectorParams, WorldInspectorPlugin};
-use bevy_rapier3d::{prelude::{NoUserData, RapierPhysicsPlugin}, render::RapierDebugRenderPlugin};
-use bevy_ymir::{player::YmirPlayer, YmirPlugin};
-use rustpg::{
-    core::{camera::CameraPlugin, spectator::SpectatorPlugin},
-    nycthemeron::{time_of_day::TimeOfDay, NycthemeronPlugin},
-};
+use bevy_ymir::{clipmap::ClipmapMaterial, YmirPlugin};
 
 fn main() {
-    let inspectors = match std::env::args().collect::<Vec<String>>().get(1) {
-        Some(inspectors) => inspectors == "true",
-        None => false,
-    };
-
-    let mut app = App::new();
-    app.add_system(add_ymir_player)
-        .insert_resource(Msaa { samples: 4 })
-        .insert_resource(ClearColor(Color::rgb_u8(85, 156, 215)))
+    App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugin(CameraPlugin)
-        .add_plugin(SpectatorPlugin)
-        .add_plugin(NycthemeronPlugin {
-            time_of_day: TimeOfDay::new(12.0, 0.0, 0.0, 0.0),
-            inspectors: false,
-        })
-        // .add_plugin(RapierDebugRenderPlugin::default())
-        .add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
-        .add_plugin(YmirPlugin {
-            chunk_distance: 5,
-            object_distance: 5,
-            inspectors,
-            ..default()
-        });
-
-    if inspectors {
-        app.add_plugin(InspectorPlugin::<AmbientLight>::default())
-            .add_plugin(WorldInspectorPlugin::default())
-            .insert_resource(WorldInspectorParams {
-                sort_components: true,
-                despawnable_entities: true,
-                ..default()
-            });
-    }
-
-    app.run();
+        .add_plugins(YmirPlugin)
+        .add_plugins(MaterialPlugin::<ClipmapMaterial>::default())
+        .add_systems(Startup, setup_scene)
+        .run();
 }
 
-fn add_ymir_player(mut commands: Commands, query: Query<Entity, Added<Camera>>) {
-    for entity in &query {
-        commands.entity(entity).insert(YmirPlayer);
-    }
+fn setup_scene(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+) {
+    commands.spawn(Camera3dBundle {
+        transform: Transform::from_xyz(-20., 10., 4.).looking_at(Vec3::ZERO, Vec3::Y),
+        ..default()
+    });
+
+    commands.spawn(MaterialMeshBundle {
+        mesh: meshes.add(Mesh::from(Plane3d { normal: Direction3d::Y })),
+        transform: Transform::IDENTITY,
+        material: materials.add(StandardMaterial {
+            base_color: Color::LIME_GREEN,
+            ..Default::default()
+        }),
+        ..default()
+    });
 }
