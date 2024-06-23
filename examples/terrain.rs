@@ -13,20 +13,19 @@ fn main() {
 fn setup_scene(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut materials: ResMut<Assets<ClipmapMaterial>>,
 ) {
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(-20., 10., 4.).looking_at(Vec3::ZERO, Vec3::Y),
+        transform: Transform::from_xyz(-4., 2., 4.).looking_at(Vec3::ZERO, Vec3::Y),
         ..default()
     });
 
     commands.spawn(MaterialMeshBundle {
-        mesh: meshes.add(Mesh::from(Plane3d { normal: Direction3d::Y })),
+        mesh: meshes.add(Mesh::from(Plane3d {
+            normal: Direction3d::Y,
+        })),
         transform: Transform::IDENTITY,
-        material: materials.add(StandardMaterial {
-            base_color: Color::LIME_GREEN,
-            ..Default::default()
-        }),
+        material: materials.add(ClipmapMaterial { color: Color::RED }),
         ..default()
     });
 }

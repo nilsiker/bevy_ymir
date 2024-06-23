@@ -1,8 +1,0 @@
-
-fn vertex() {
-
-}
-
-fn fragment() {
-
-}
