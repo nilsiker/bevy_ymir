@@ -12,20 +12,24 @@ fn main() {
 
 fn setup_scene(
     mut commands: Commands,
+    asset_server: Res<AssetServer>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ClipmapMaterial>>,
 ) {
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(-4., 2., 4.).looking_at(Vec3::ZERO, Vec3::Y),
+        transform: Transform::from_xyz(-1.5, 0.5, 1.5).looking_at(Vec3::ZERO, Vec3::Y),
         ..default()
     });
 
     commands.spawn(MaterialMeshBundle {
-        mesh: meshes.add(Mesh::from(Plane3d {
-            normal: Direction3d::Y,
+        mesh: meshes.add(Mesh::from(shape::Plane {
+            size: 2.0,
+            subdivisions: 256,
         })),
         transform: Transform::IDENTITY,
-        material: materials.add(ClipmapMaterial { color: Color::RED }),
+        material: materials.add(ClipmapMaterial {
+            height_map: asset_server.load("maps/iceland_height.png"),
+        }),
         ..default()
     });
 }
