@@ -6,7 +6,10 @@ pub struct ClipmapMaterial {
     #[texture(0)]
     #[sampler(1)]
     pub height_map: Handle<Image>,
-    #[uniform(2)]
+    #[texture(2)]
+    #[sampler(3)]
+    pub normal_map: Handle<Image>,
+    #[uniform(4)]
     pub amplitude: f32,
 }
 

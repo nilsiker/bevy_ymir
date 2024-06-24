@@ -34,7 +34,8 @@ fn setup_scene(
             transform: Transform::IDENTITY,
             material: materials.add(ClipmapMaterial {
                 height_map: asset_server.load("maps/iceland_height.png"),
-                amplitude: 0.01,
+                normal_map: asset_server.load("maps/iceland_normal.png"),
+                amplitude: 0.02,
             }),
             ..default()
         },
