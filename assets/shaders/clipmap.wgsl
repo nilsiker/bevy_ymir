@@ -22,7 +22,8 @@ struct VertexOutput {
 
 @vertex
 fn vertex(
-    vertex: Vertex
+    vertex: Vertex,
+    
 ) -> VertexOutput {
     var out: VertexOutput;
 
